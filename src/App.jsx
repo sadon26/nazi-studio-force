@@ -29,11 +29,11 @@ export default function VideoRoomsApp() {
 
   const rooms = [
     {
-      id: "darkroom",
-      name: "Dark Room",
+      id: "office",
+      name: "Office",
       start: 0,
       end: 3,
-      roomAudio: darkRoomAudio,
+      roomAudio: ambientAudioFile,
       objects: [],
     },
     {
