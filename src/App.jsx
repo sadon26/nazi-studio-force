@@ -11,7 +11,6 @@ import utensilsImg from "./assets/object_bedroom_pot.png";
 import ammunitionAudio from "./assets/ammunition-audio.MP3";
 import utensilsAudio from "./assets/pot-audio.MP3";
 import darkRoomAudio from "./assets/dark-room.MP3";
-import TypewriterText from "./TypeWriter";
 
 export default function VideoRoomsApp() {
   const videoRef = useRef(null);
@@ -316,31 +315,31 @@ in the camp.`,
   };
 
   return (
-    <div className="w-screen h-screen relative overflow-hidden select-none bg-black text-white">
+    <div className="w-screen h-screen relative overflow-hidden select-none bg-black text-white font-sans">
       {/* 🎥 Video background */}
       <video
         ref={videoRef}
         src={videoFile}
-        className="absolute inset-0 w-full h-full object-cover brightness-[0.85]"
+        className="absolute inset-0 w-full h-full object-cover brightness-[0.6] contrast-110 transition-all duration-1000"
         onTimeUpdate={onTimeUpdate}
         muted={false}
         playsInline
         preload="auto"
       />
 
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/90" />
 
       {/* 🧭 HUD */}
-      <div className="absolute top-5 left-[50%] translate-x-[-50%] bg-black/50 backdrop-blur-md border border-white/10 text-white px-4 py-3 rounded-xl shadow-lg">
+      <div className="absolute top-6 left-[50%] translate-x-[-50%] bg-zinc-900/70 backdrop-blur-lg border border-amber-400/30 text-white px-6 py-2 rounded-lg shadow-xl z-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={rooms[currentRoomIndex]?.name}
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            exit={{ opacity: 0, y: 5 }}
             transition={{ duration: 0.8 }}
-            className="text-sm font-semibold"
-            style={{ color: "lightgoldenrodyellow" }}
+            className="text-lg font-light tracking-widest uppercase"
+            style={{ color: "#fcd34d" /* amber-300 */ }}
           >
             {rooms[currentRoomIndex]?.name}
           </motion.div>
@@ -358,21 +357,27 @@ in the camp.`,
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
-            className="absolute inset-0 flex items-center justify-center"
+            className="absolute inset-0 flex items-center justify-center bg-black/80 z-20"
           >
-            <div className="text-center space-y-4">
-              <div className="text-2xl font-light tracking-wide text-white drop-shadow-md">
-                Press the
+            <div className="text-center space-y-6">
+              <div className="text-3xl font-extralight tracking-wider text-white drop-shadow-lg">
+                Start the Archival Journey
               </div>
               <motion.div
-                className="inline-flex items-center gap-3"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ repeat: Infinity, duration: 1 }}
+                className="inline-flex items-center gap-4"
+                animate={{ y: [0, -5, 0] }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 1.5,
+                  ease: "easeInOut",
+                }}
               >
-                <div className="px-5 py-3 border border-white/40 rounded-lg text-lg text-white font-mono bg-white/10 backdrop-blur-md shadow-lg">
+                <div className="px-6 py-3 border-2 border-amber-400 rounded-lg text-xl text-amber-300 font-mono bg-amber-400/10 backdrop-blur-md shadow-2xl transition duration-300">
                   Space
                 </div>
-                <div className="text-white/80 text-lg">button to begin</div>
+                <div className="text-white/80 text-xl font-light">
+                  button to begin
+                </div>
               </motion.div>
             </div>
           </motion.div>
@@ -386,16 +391,21 @@ in the camp.`,
             <motion.button
               key={obj.id}
               onClick={() => onObjectClick(obj)}
-              className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto bg-white/20 hover:bg-white/40 rounded-full w-36 h-36 border border-white/30 shadow-xl hover:shadow-white/50 transition"
+              className="absolute  -translate-x-1/2 -translate-y-1/2 pointer-events-auto bg-transparent border-none outline-none active:outline-none transition p-0 w-40 h-40 z-10"
               style={{ left: obj.x, top: obj.y }}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              whileHover={{
+                scale: 1.2,
+                filter: "drop-shadow(0 0 15px rgba(252, 211, 77, 0.9))", // Amber glow effect
+              }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
             >
               <img
                 src={obj.src}
                 alt={obj.id}
-                className="h-full w-full object-contain"
+                className="h-full w-full object-contain filter drop-shadow-lg"
               />
             </motion.button>
           ))}
@@ -403,14 +413,20 @@ in the camp.`,
         {pausedForPopup && visibleObjects.length > 0 && (
           <motion.div
             key="hint"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/60 text-white px-6 py-3 rounded-xl backdrop-blur-md border border-white/10 shadow-lg"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
           >
-            Click an object to inspect it — press{" "}
-            <span className="font-semibold text-blue-300">Space</span> to
-            continue.
+            <div
+              className="absolute bottom-8 left-1/2 bg-zinc-900/70 text-white px-6 py-3 rounded-full backdrop-blur-md border border-amber-400/30 shadow-xl z-10 text-base text-center"
+              style={{
+                transform: "translateX(-50%)",
+              }}
+            >
+              Click an object to inspect it — press{" "}
+              <span className="font-semibold text-amber-300">Space</span> to
+              continue.
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -423,42 +439,65 @@ in the camp.`,
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50"
+            className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-md z-50"
           >
             <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
               transition={{ duration: 0.4 }}
-              className="bg-white/10 border border-white/20 rounded-2xl p-8 max-w-lg mx-4 shadow-2xl text-center backdrop-blur-lg min-w-[500px]"
+              className="bg-zinc-900/95 border-2 border-amber-400/40 rounded-2xl p-8 max-w-4xl mx-4 shadow-3xl text-left backdrop-blur-lg w-full"
             >
               <div className="text-right">
                 <button
                   onClick={closeModal}
-                  className="text-white/70 hover:text-white text-xl font-light transition"
+                  className="text-white/50 hover:text-white text-3xl font-light transition"
                 >
-                  ✕
+                  &times;
                 </button>
               </div>
-              <motion.p
-                key={activeModal?.text}
-                className="text-xl font-bold mt-4 text-white text-left tracking-wide drop-shadow-md cookie-regular"
-                style={{ color: "lightgoldenrodyellow" }}
+              <motion.div
+                key={activeModal?.text || activeModal?.image}
+                className="text-2xl font-light mt-4 text-white text-left tracking-wide drop-shadow-md poppins-regular space-y-4"
+                style={{ color: "#fcd34d" }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.2 }}
               >
-                <TypewriterText text={activeModal?.text || ""} speed={45} />
-              </motion.p>
+                {activeModal.image && (
+                  <img
+                    src={activeModal.image}
+                    alt="Object Detail"
+                    className="w-full h-auto object-contain rounded-lg border border-white/20 shadow-xl"
+                  />
+                )}
 
-              <p className="mt-3 text-sm text-gray-300 italic">
-                (Audio playing...)
-              </p>
+                {activeModal?.video ? (
+                  <video
+                    src={activeModal.video}
+                    controls
+                    autoPlay
+                    playsInline
+                    className="w-full h-auto object-contain rounded-lg"
+                  ></video>
+                ) : (
+                  <p className="text-lg text-gray-300 border-l-4 border-amber-400/50 pl-4 italic">
+                    {activeModal.text}
+                  </p>
+                )}
+              </motion.div>
+
+              {activeModal.audio && (
+                <p className="mt-3 text-sm text-amber-300 italic">
+                  <span className="animate-pulse mr-2">●</span>Audio Testimony
+                  Playing...
+                </p>
+              )}
               <button
                 onClick={closeModal}
-                className="mt-8 px-8 py-2 bg-white/20 hover:bg-white/30 border border-white/30 rounded-full text-white transition"
+                className="mt-8 px-10 py-3 bg-amber-400/15 hover:bg-amber-400/25 border border-amber-400/40 rounded-full text-amber-300 font-semibold transition tracking-wide"
               >
-                Done
+                Close View
               </button>
             </motion.div>
           </motion.div>
