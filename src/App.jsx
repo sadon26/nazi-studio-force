@@ -31,6 +31,10 @@ export default function VideoRoomsApp() {
   const [currentRoomIndex, setCurrentRoomIndex] = useState(0);
   const [activeModal, setActiveModal] = useState(null);
 
+  // ADDED: State for custom cursor
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isPointerActive, setIsPointerActive] = useState(false);
+
   const rooms = [
     {
       id: "office",
@@ -136,7 +140,7 @@ We didn’t have much hair because our hair was shorn originally. But it grew ba
     fadeIntervalsRef.current.push(id);
   }
 
-  // 🎬 Initialize once
+  // 🎬 Initialize once and set up mouse listener
   useEffect(() => {
     ambientRef.current = new Audio(ambientAudioFile);
     ambientRef.current.loop = true;
@@ -163,8 +167,15 @@ We didn’t have much hair because our hair was shorn originally. But it grew ba
       }
     };
 
+    // ADDED: Mouse move listener
+    const updateMousePosition = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", updateMousePosition);
     window.addEventListener("keydown", onKey);
+
     return () => {
+      window.removeEventListener("mousemove", updateMousePosition); // ADDED Cleanup
       window.removeEventListener("keydown", onKey);
       ambientRef.current?.pause();
       Object.values(roomAudiosRef.current).forEach((a) => a?.pause());
@@ -296,8 +307,42 @@ We didn’t have much hair because our hair was shorn originally. But it grew ba
       : fadeAudio(ambientRef.current, 0.5, 300);
   };
 
+  // ADDED: Custom cursor motion variant
+  const cursorVariants = {
+    default: {
+      height: 8,
+      width: 8,
+      opacity: 1,
+      backgroundColor: "rgb(255, 255, 255)",
+      border: "0px solid #fcd34d",
+      transition: { type: "tween", ease: "backOut", duration: 0.15 },
+    },
+    pointer: {
+      height: 30,
+      width: 30,
+      opacity: 1,
+      backgroundColor: "rgba(0, 0, 0, 0)",
+      border: "2px solid #fcd34d",
+      transition: { type: "spring", stiffness: 400, damping: 20 },
+    },
+  };
+
   return (
-    <div className="w-screen h-screen relative overflow-hidden select-none bg-black text-white font-sans">
+    // MODIFIED: Added cursor-none to the main container
+    <div className="w-screen h-screen relative overflow-hidden select-none bg-black text-white font-sans cursor-none">
+      {/* ADDED: Custom Cursor */}
+      <motion.div
+        className="fixed top-0 left-0 rounded-full pointer-events-none z-[1000] mix-blend-difference"
+        variants={cursorVariants}
+        animate={isPointerActive ? "pointer" : "default"}
+        style={{
+          x: mousePosition.x,
+          y: mousePosition.y,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+      />
+
       {/* 🎥 Video background */}
       <video
         ref={videoRef}
@@ -354,7 +399,12 @@ We didn’t have much hair because our hair was shorn originally. But it grew ba
                   ease: "easeInOut",
                 }}
               >
-                <div className="px-6 py-3 border-2 border-amber-400 rounded-lg text-xl text-amber-300 font-mono bg-amber-400/10 backdrop-blur-md shadow-2xl transition duration-300">
+                <div
+                  className="px-6 py-3 border-2 border-amber-400 rounded-lg text-xl text-amber-300 font-mono bg-amber-400/10 backdrop-blur-md shadow-2xl transition duration-300"
+                  // ADDED: Hover to start button
+                  onMouseEnter={() => setIsPointerActive(true)}
+                  onMouseLeave={() => setIsPointerActive(false)}
+                >
                   Space
                 </div>
                 <div className="text-white/80 text-xl font-light">
@@ -373,6 +423,9 @@ We didn’t have much hair because our hair was shorn originally. But it grew ba
             <motion.button
               key={obj.id}
               onClick={() => onObjectClick(obj)}
+              // ADDED: Hover to object button
+              onMouseEnter={() => setIsPointerActive(true)}
+              onMouseLeave={() => setIsPointerActive(false)}
               className="absolute  -translate-x-1/2 -translate-y-1/2 pointer-events-auto bg-transparent border-none outline-none active:outline-none transition p-0 w-40 h-40 z-10"
               style={{ left: obj.x, top: obj.y }}
               initial={{ scale: 0.5, opacity: 0 }}
@@ -429,11 +482,17 @@ We didn’t have much hair because our hair was shorn originally. But it grew ba
               exit={{ scale: 0.9, y: 20 }}
               transition={{ duration: 0.4 }}
               className="bg-zinc-900/95 border-2 border-amber-400/40 rounded-2xl p-8 max-w-4xl mx-4 shadow-3xl text-left backdrop-blur-lg w-full"
+              // ADDED: Hover to modal background to revert to default cursor
+              onMouseEnter={() => setIsPointerActive(false)}
+              onMouseLeave={() => setIsPointerActive(false)}
             >
               <div className="text-right">
                 <button
                   onClick={closeModal}
                   className="text-white/50 hover:text-white text-3xl font-light transition"
+                  // ADDED: Hover to close button (X)
+                  onMouseEnter={() => setIsPointerActive(true)}
+                  onMouseLeave={() => setIsPointerActive(false)}
                 >
                   &times;
                 </button>
@@ -480,6 +539,9 @@ We didn’t have much hair because our hair was shorn originally. But it grew ba
               <button
                 onClick={closeModal}
                 className="mt-8 px-10 py-3 bg-amber-400/15 hover:bg-amber-400/25 border border-amber-400/40 rounded-full text-amber-300 font-semibold transition tracking-wide"
+                // ADDED: Hover to close view button
+                onMouseEnter={() => setIsPointerActive(true)}
+                onMouseLeave={() => setIsPointerActive(false)}
               >
                 Close View
               </button>
