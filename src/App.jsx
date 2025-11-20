@@ -9,8 +9,12 @@ import storageClothesAudio from "./assets/audio-clothes.MP3";
 import ammunitionImg from "./assets/object_machineroom_ammunition.png";
 import utensilsImg from "./assets/object_bedroom_pot.png";
 import ammunitionAudio from "./assets/ammunition-audio.MP3";
+import ammunitionTranscript from "./assets/ammunition-transcript.json";
 import utensilsAudio from "./assets/pot-audio.MP3";
 import darkRoomAudio from "./assets/dark-room.MP3";
+import audioCLothesTranscript from "./assets/audio-clothes.json";
+import bedroomTranscript from "./assets/bedroom-transcript.json";
+import TypewriterText from "./TypeWriter";
 
 export default function VideoRoomsApp() {
   const videoRef = useRef(null);
@@ -56,20 +60,7 @@ export default function VideoRoomsApp() {
           src: bedroomRoomCloth,
           x: "45%",
           y: "50%",
-          text: `When we came, the first thing that we -  when they unloaded us, they took everything away.
-They took us through a little tunnel, everybody had to go through this tunnel, again a
-tunnel. We had to leave--, to undress ourselves, everything would be left inside and that
-is where I lost my tallis and tefillin-- my tefillin because I was… I didn’t need
-the tallis, only the tefillin, because we had to leave it and I couldn’t get it no more. Up to
-then, I had every day before the Appell, I got up in the morning and put on the tefillin.
-And we went in on this one end, it was maybe a mile long, very small space, a tunnel,
-and you came out of the other end. It was dark inside, one just touched the other to
-follow. All the clothes remained in the back of us. And on the other end was sitting with
-the tables, both sides the Germans, and they gave us a number, not the numbers inscribed
-here, but everybody had like, it was like a prison coat, it looked like a pajamas, white and
-blue, white and blue or white and gray, you know, stripes, pants, and on each one of 
-was sewed on a number. My number was 68,692, I remember still, and my brother’s was
-a number higher, but we were together.`,
+          transcript: JSON.parse(JSON.stringify(audioCLothesTranscript)),
           audio: storageClothesAudio,
           popupTime: 9,
         },
@@ -88,6 +79,7 @@ a number higher, but we were together.`,
           src: ammunitionImg,
           x: "50%",
           y: "70%",
+          transcript: JSON.parse(JSON.stringify(ammunitionTranscript)),
           text: `So what we did about the other things besides lifting those bombs - shells that is. We also made the - what do you call this? The ammunition the powder. The powder kegs. And for shipment they
 were supposed - they were emerged in wax in hot wax. So the keg was powder and phosphorus yellow. And this one had to be wrapped small, it looked like kegs disks. And they were submerged into hot wax. And the first sensational thing was that actually we were turning all yellow from the powder and we would be walking half hour to the factory and half hour away from the
 factory eight hundred people all yellow like canary birds.
@@ -109,17 +101,7 @@ We didn’t have much hair because our hair was shorn originally. But it grew ba
           src: utensilsImg,
           x: "50%",
           y: "40%",
-          text: `I think I remember that there were like two slices of bread there. Once in a while they had some jam that went with it, and I don’t remember whether it was
-one soup a day or two soups a day, that you had. It probably was not quite possible to
-survive on that. And, the things that, that helped is that some people had some stuff with
-them and were able to buy some extra food. Then, another thing that was happening in
-that camp that helped, that some of the clothing and belongings of the Jews that were
-exterminated was coming to that camp, and again, some of the things people were able to
-exchange for food later with the amount of clothes. See, it would come to the camp and
-some of the people worked with it - like the better things would to the Germans and they
-looked for the jewelry and so. But as long as this, and some of the people who worked in
-the camp worked on that. So that small amount of it would filter down towards the people
-in the camp.`,
+          transcript: JSON.parse(JSON.stringify(bedroomTranscript)),
           audio: utensilsAudio,
           popupTime: 33,
         },
@@ -480,6 +462,8 @@ in the camp.`,
                     playsInline
                     className="w-full h-auto object-contain rounded-lg"
                   ></video>
+                ) : activeModal.transcript ? (
+                  <TypewriterText transcript={activeModal.transcript} />
                 ) : (
                   <p className="text-lg text-gray-300 border-l-4 border-amber-400/50 pl-4 italic">
                     {activeModal.text}
